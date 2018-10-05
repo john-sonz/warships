@@ -1,0 +1,52 @@
+$cell-size: 35px;
+$border: 1px;
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+#container{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#player, #machine{    
+    width: 50vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .board{
+        display: flex;
+        flex-direction: column;
+    }
+}
+.cell{
+    width: $cell-size;
+    height: $cell-size;    
+    display: inline-block;
+    border: $border solid black;    
+    &:last-child{
+        border-right: (2 * $border) solid black;
+    }
+    &:first-child{
+        border-left: (2 * $border) solid black;
+    }
+    &.blue{
+        background-color: aqua;
+    }
+}
+.row{
+    display: block;
+    height: $cell-size;
+    margin: 0;
+    padding: 0;
+    &:last-child .cell{
+        border-bottom: (2 * $border) solid black
+    }
+    &:first-child .cell{
+        border-top: (2 * $border) solid black
+    }
+}
