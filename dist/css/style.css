@@ -5,6 +5,10 @@
           box-sizing: border-box;
 }
 
+body {
+  padding: 10px;
+}
+
 #container {
   width: 100vw;
   height: 100vh;
@@ -42,22 +46,22 @@
           flex-direction: column;
 }
 
-.cell {
+.cell, .ship div {
   width: 35px;
   height: 35px;
   display: inline-block;
   border: 1px solid black;
 }
 
-.cell:last-child {
+.cell:last-child, .ship div:last-child {
   border-right: 2px solid black;
 }
 
-.cell:first-child {
+.cell:first-child, .ship div:first-child {
   border-left: 2px solid black;
 }
 
-.cell.blue {
+.cell.blue, .ship div.blue {
   background-color: aqua;
 }
 
@@ -74,5 +78,27 @@
 
 .row:first-child .cell {
   border-top: 2px solid black;
+}
+
+#ships {
+  min-width: 230px;
+}
+
+.ship {
+  margin: 10px 5px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: left;
+      -ms-flex-pack: left;
+          justify-content: left;
+}
+
+.ship:hover div {
+  background-color: green;
+}
+
+.ship.selected div {
+  background-color: blue !important;
 }
 /*# sourceMappingURL=style.css.map */

@@ -9,5 +9,5 @@ export default class Ship {
         this.direction = direction;
         this.length = length;
         this.positions = cells;
-    }
+    }    
 }

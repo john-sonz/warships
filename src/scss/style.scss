@@ -6,6 +6,9 @@ $border: 1px;
     padding: 0;
     box-sizing: border-box;
 }
+body{
+    padding: 10px;
+}
 #container{
     width: 100vw;
     height: 100vh;
@@ -23,11 +26,11 @@ $border: 1px;
         flex-direction: column;
     }
 }
-.cell{
+.cell, .ship div{
     width: $cell-size;
     height: $cell-size;    
     display: inline-block;
-    border: $border solid black;    
+    border: $border solid black;
     &:last-child{
         border-right: (2 * $border) solid black;
     }
@@ -48,5 +51,20 @@ $border: 1px;
     }
     &:first-child .cell{
         border-top: (2 * $border) solid black
+    }
+}
+#ships{
+    min-width: 230px;
+}
+
+.ship{
+    margin: 10px 5px;    
+    display: flex;
+    justify-content: left;
+    &:hover div{
+        background-color: green;
+    }
+    &.selected div{
+        background-color: blue !important;
     }
 }

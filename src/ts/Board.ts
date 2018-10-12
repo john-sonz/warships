@@ -1,6 +1,16 @@
 import Cell from './Cell';
 import Ship from './Ship';
+import ShipSetter from './ShipSetter';
+
 let colors: string[] = ["blue", "red", "green", "yellow"];
+
+interface shipSetting {
+    x: number;
+    y: number;
+    direction: boolean;
+    size: number;
+}
+
 export default class Board {
     board: number[][] = [];
     width: number;
@@ -8,6 +18,7 @@ export default class Board {
     htmlBoard: HTMLElement[][] = [];
     boardContainer: HTMLElement;
     ships: Ship[] = [];
+    lastProposed: shipSetting = null;
     constructor(width: number, height: number) {
         [this.width, this.height] = [width, height];
         for (let i = 0; i < height; i++) {
@@ -17,9 +28,8 @@ export default class Board {
             }
             this.board.push(row)
         }
-        this.createHTMLBoard();
     }
-    createHTMLBoard() {
+    createHTMLBoard(shipSetter: ShipSetter = null) {
         this.boardContainer = document.createElement("div")
         this.boardContainer.className = "board";
         for (let i = 0; i < this.height; i++) {
@@ -28,7 +38,11 @@ export default class Board {
             rowDiv.className = "row";
             for (let j = 0; j < this.width; j++) {
                 const cell = document.createElement("div");
+                if (shipSetter) {
+                    cell.addEventListener('mouseover', (e) => this.checkShip(e, shipSetter));
+                }
                 cell.className = "cell";
+                cell.id = `${j}-${i}`;
                 row.push(cell);
                 rowDiv.appendChild(cell);
 
@@ -44,13 +58,13 @@ export default class Board {
             if (direction) Y = y + i;
             else X = x + i;
             this.board[Y][X] = 1;
-            this.htmlBoard[Y][X].style.backgroundColor = colors[length - 1];
+            this.htmlBoard[Y][X].classList.add('blue');
         }
     }
     drawShips(shipSizes: number[]) {
         while (shipSizes.length > 0) {
             const size = shipSizes.pop();
-            let found = false;            
+            let found = false;
             while (!found) {
                 let [x, y, direction] = [Math.floor(Math.random() * this.width), Math.floor(Math.random() * this.height), Math.random() < 0.5];
                 if (x > this.width - size && !direction) {
@@ -65,18 +79,52 @@ export default class Board {
                     break;
                 }
                 const [shipsPos, surroundings] = generateCheckPositions(x, y, size, this.width, this.height, direction);
-                const checkedShipsPos = shipsPos.filter(pos => {
-                    return this.board[pos[1]][pos[0]] === 0
-                })
-                const checkedSurroundings = surroundings.filter(pos => {
-                    return this.board[pos[1]][pos[0]] === 0
-                })
-                found = (shipsPos.length === checkedShipsPos.length && surroundings.length === checkedSurroundings.length);
+                found = this.checkPositions(shipsPos, surroundings)
                 if (found) this.addShip(x, y, size, direction);
             }
         }
     }
+    checkPositions(ships: number[][], surroundings:number[][]): boolean{        
+                const s = ships.filter(pos => {
+                    return this.board[pos[1]][pos[0]] === 0
+                })
+                const sur = surroundings.filter(pos => {
+                    return this.board[pos[1]][pos[0]] === 0
+                })
+                return (ships.length === s.length && surroundings.length === sur.length)
+    }
+    viewShip(color: string, s: shipSetting) {
+        const { x, y, direction, size } = s;
+        for (let i = 0; i < size; i++) {
+            let [X, Y] = [x, y];
+            if (direction) Y = y + i;
+            else X = x + i;            
+            if(X >= 0 && X < this.width && Y >= 0 && Y < this.height){
+                this.board[Y][X] = 1;
+                this.htmlBoard[Y][X].style.backgroundColor = color;
+            }
+        }
+        this.lastProposed = s;
+    }
+    
+    checkShip(e: Event, shipSetter: ShipSetter) {
+        const el = e.target as HTMLElement;
+        const pos = el.id.split("-").map(a => parseInt(a));        
+        const ship: shipSetting = {
+            x: pos[0],
+            y: pos[1],
+            direction: shipSetter.direction,
+            size: shipSetter.selected
+        }        
+        if(this.lastProposed){
+            this.viewShip("", this.lastProposed);
+        }
+        this.viewShip("red", ship)
+
+    }
+
 }
+
 function generateCheckPositions(x: number, y: number, length: number, width: number, height: number, direction: boolean = false, ): number[][][] {
     const positions: number[][] = []
     for (let i = -1; i < 2; i++) {
