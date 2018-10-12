@@ -22,6 +22,7 @@ gulp.task("default", ["copy-html"], function () {
         })
         .plugin(tsify)
         .bundle()
+        .on('error', (error) => console.log(error))
         .pipe(source('bundle.js'))
         .pipe(gulp.dest("dist"));
     } catch (error) {

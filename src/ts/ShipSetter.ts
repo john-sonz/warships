@@ -11,10 +11,10 @@ export default class ShipSetter{
         for (let i = ships.length - 1; i >= 0; i--) {
             const ship = document.createElement("div");
             ship.id = `${ships[i]}`;
-            ship.className = "ship";            
+            ship.className = "ship";
             ship.addEventListener("click", e => {
                 const a = document.getElementsByClassName("selected")[0];
-                a.classList.remove("selected");
+                if(a) a.classList.remove("selected");
                 const el = e.currentTarget as HTMLElement;
                 el.classList.add('selected');
                 this.selected = parseInt(el.id);
@@ -26,6 +26,9 @@ export default class ShipSetter{
             this.container.appendChild(ship);
         }
         document.getElementsByClassName('ship')[0].classList.add("selected");
+        
     }
-    getContainer = () => this.container;    
+    getContainer = () => this.container;
+    updateDirection = () => this.direction = !this.direction;
+    isSetting = () => this.selected != null;
 }

@@ -16,4 +16,10 @@ document.getElementById("player").appendChild(playerBoard.getHMTLBoard());
 
 machineBoard.drawShips(shipsSizes.slice());
 
-
+document.body.addEventListener("contextmenu", e => {
+    e.preventDefault();
+    if(shipSetter.isSetting()) {
+        shipSetter.updateDirection();
+        playerBoard.updateLastShip(shipSetter.direction);
+    }
+});
