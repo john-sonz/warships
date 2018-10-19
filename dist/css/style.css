@@ -12,19 +12,12 @@ body {
 #container {
   width: 100vw;
   height: 100vh;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
 }
 
-#player, #machine {
+#player,
+#machine {
   width: 50vw;
+  min-width: 351px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -36,33 +29,48 @@ body {
           align-items: center;
 }
 
-#player .board, #machine .board {
+#player .board,
+#machine .board {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  width: 350px;
+  height: 350px;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
 }
 
-.cell, .ship div {
+.cell,
+.ship div {
   width: 35px;
   height: 35px;
   display: inline-block;
   border: 1px solid black;
 }
 
-.cell:last-child, .ship div:last-child {
+.cell:last-child,
+.ship div:last-child {
   border-right: 2px solid black;
 }
 
-.cell:first-child, .ship div:first-child {
+.cell:first-child,
+.ship div:first-child {
   border-left: 2px solid black;
 }
 
-.cell.blue, .ship div.blue {
+.cell.blue,
+.ship div.blue {
   background-color: aqua;
+}
+
+.miss {
+  background-color: red !important;
+}
+
+.hit {
+  background-color: green !important;
 }
 
 .row {
@@ -100,5 +108,54 @@ body {
 
 .ship.selected div {
   background-color: blue !important;
+}
+
+#start {
+  width: 120px;
+  padding: 10px 10px;
+  font-size: 1.4em;
+  background-color: pink;
+  border: none;
+  text-align: center;
+  border-radius: 5px;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+}
+
+#start:hover {
+  background-color: rgba(255, 192, 203, 0.8);
+  cursor: pointer;
+}
+
+#boards {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -ms-flex-line-pack: center;
+      align-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+#sexi {
+  background: -webkit-gradient(linear, left top, right top, from(red), color-stop(orange), color-stop(yellow), color-stop(green), color-stop(cyan), color-stop(blue), color-stop(violet), color-stop(blue), color-stop(cyan), color-stop(green), color-stop(yellow), color-stop(orange), to(red));
+  background: linear-gradient(to right, red, orange, yellow, green, cyan, blue, violet, blue, cyan, green, yellow, orange, red);
+  color: white;
+  font-weight: bold;
+  width: 40%;
+  margin: 30px auto;
+  border-color: red;
+  border-width: 3px;
+  border-style: solid;
+  border-radius: 10px;
+  padding: 40px 0;
+  height: 150px;
+  text-align: center;
+  font-size: 2.5em;
+  font-family: Arial, sans-serif;
 }
 /*# sourceMappingURL=style.css.map */

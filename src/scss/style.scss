@@ -1,70 +1,131 @@
 $cell-size: 35px;
 $border: 1px;
 
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-body{
+
+body {
     padding: 10px;
 }
-#container{
+
+#container {
     width: 100vw;
     height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
-#player, #machine{    
+
+#player,
+#machine {
     width: 50vw;
+    min-width: 351px;
     display: flex;
     justify-content: center;
     align-items: center;
-    .board{
+
+    .board {
         display: flex;
+        width: 350px;
+        height: 350px;
         flex-direction: column;
     }
 }
-.cell, .ship div{
+
+.cell,
+.ship div {
     width: $cell-size;
-    height: $cell-size;    
+    height: $cell-size;
     display: inline-block;
     border: $border solid black;
-    &:last-child{
+
+    &:last-child {
         border-right: (2 * $border) solid black;
     }
-    &:first-child{
+
+    &:first-child {
         border-left: (2 * $border) solid black;
     }
-    &.blue{
+
+    &.blue {
         background-color: aqua;
     }
 }
-.row{
+.miss{
+    background-color: red !important;
+}
+.hit{
+    background-color: green !important;
+}
+.row {
     display: block;
     height: $cell-size;
     margin: 0;
     padding: 0;
-    &:last-child .cell{
+
+    &:last-child .cell {
         border-bottom: (2 * $border) solid black
     }
-    &:first-child .cell{
+
+    &:first-child .cell {
         border-top: (2 * $border) solid black
     }
 }
-#ships{
+
+#ships {
     min-width: 230px;
 }
 
-.ship{
-    margin: 10px 5px;    
+.ship {
+    margin: 10px 5px;
     display: flex;
     justify-content: left;
-    &:hover div{
+
+    &:hover div {
         background-color: green;
     }
-    &.selected div{
+
+    &.selected div {
         background-color: blue !important;
     }
+}
+
+#start {
+    width: 120px;
+    padding: 10px 10px;
+    font-size: 1.4em;
+    background-color: pink;
+    border: none;
+    text-align: center;
+    border-radius: 5px;
+    transition: 0.5s;
+
+    &:hover {
+        background-color: rgba($color: pink, $alpha: 0.8);
+        cursor: pointer;
+    }
+}
+
+#boards {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+
+#sexi {
+    background: linear-gradient(to right, red,orange, yellow, green, cyan, blue, violet, blue, cyan, green, yellow, orange, red);
+    color: white;
+    font-weight: bold;
+    width: 40%;
+    margin: 30px auto;
+    border-color: red;
+    border-width: 3px;
+    border-style: solid;
+    border-radius: 10px;
+    padding: 40px 0;
+    height: 150px;
+    text-align: center;
+    font-size: 2.5em;
+    font-family: Arial, sans-serif;
 }

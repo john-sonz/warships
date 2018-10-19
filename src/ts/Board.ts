@@ -1,8 +1,5 @@
-import Cell from './Cell';
 import Ship from './Ship';
 import ShipSetter from './ShipSetter';
-
-let colors: string[] = ["blue", "red", "green", "yellow"];
 
 interface shipSetting {
     x: number;
@@ -11,27 +8,38 @@ interface shipSetting {
     size: number;
 }
 
+enum State {
+    Empty,
+    Taken,
+    Hit,
+    Miss
+};
+
 export default class Board {
     board: number[][] = [];
+    shots: number[][] = []
     width: number;
     height: number;
     htmlBoard: HTMLElement[][] = [];
     boardContainer: HTMLElement;
     ships: Ship[] = [];
     lastProposed: shipSetting = null;
+    allowShoot: boolean = false;
     constructor(width: number, height: number) {
         [this.width, this.height] = [width, height];
         for (let i = 0; i < height; i++) {
             const row: number[] = [];
             for (let j = 0; j < width; j++) {
-                row.push(0);
+                row.push(State.Empty);
+                this.shots.push([i,j]);
             }
             this.board.push(row)
         }
     }
-    createHTMLBoard(shipSetter: ShipSetter = null) {
+    createHTMLBoard(shipSetter: ShipSetter = null, board2: Board = null) {
         this.boardContainer = document.createElement("div")
         this.boardContainer.className = "board";
+        console.log(shipSetter);
         for (let i = 0; i < this.height; i++) {
             const row: HTMLElement[] = [];
             const rowDiv = document.createElement('div');
@@ -42,6 +50,9 @@ export default class Board {
                     cell.addEventListener('mouseover', (e) => this.checkShip(e, shipSetter, true));
                     cell.addEventListener('click', (e) => this.checkAndAddShip(e, shipSetter));
 
+                }
+                else {
+                    cell.addEventListener('click', (e) => this.shoot(i, j, board2))
                 }
                 cell.className = "cell";
                 cell.id = `${j}-${i}`;
@@ -54,13 +65,13 @@ export default class Board {
         }
     }
     getHMTLBoard() { return this.boardContainer }
-    addShip(x: number, y: number, length: number, direction:boolean, show:boolean = false) {
+    addShip(x: number, y: number, length: number, direction: boolean, show: boolean = false) {
         for (let i = 0; i < length; i++) {
             let [X, Y] = [x, y];
             if (direction) Y = y + i;
             else X = x + i;
-            this.board[Y][X] = 1;
-            if(show){
+            this.board[Y][X] = State.Taken;
+            if (show) {
                 this.htmlBoard[Y][X].classList.add('blue');
             }
         }
@@ -82,7 +93,7 @@ export default class Board {
                     this.addShip(x, y, size, direction)
                     break;
                 }
-                const s:shipSetting = {
+                const s: shipSetting = {
                     x,
                     y,
                     direction,
@@ -96,10 +107,10 @@ export default class Board {
     }
     checkPositions(ships: number[][], surroundings: number[][]): boolean {
         const s = ships.filter(pos => {
-            return this.board[pos[1]][pos[0]] === 0
+            return this.board[pos[1]][pos[0]] === State.Empty
         })
         const sur = surroundings.filter(pos => {
-            return this.board[pos[1]][pos[0]] === 0
+            return this.board[pos[1]][pos[0]] === State.Empty
         })
         return (ships.length === s.length && surroundings.length === sur.length)
     }
@@ -116,8 +127,8 @@ export default class Board {
         this.lastProposed = s;
     }
 
-    checkShip(e: Event, shipSetter: ShipSetter, view:boolean) {
-        if(!shipSetter.selected) return false;
+    checkShip(e: Event, shipSetter: ShipSetter, view: boolean) {
+        if (!shipSetter.selected) return false;
         const el = e.target as HTMLElement;
         const pos = el.id.split("-").map(a => parseInt(a));
         const ship: shipSetting = {
@@ -134,10 +145,10 @@ export default class Board {
         }
         const [shipsPos, surroundings] = generateCheckPositions(ship, this.width, this.height);
         const shipValid = this.checkPositions(shipsPos, surroundings);
-        if(view){
+        if (view) {
             if (this.lastProposed) {
                 this.viewShip("", this.lastProposed);
-            }            
+            }
             this.viewShip(shipValid ? "green" : "red", ship);
         }
         return shipValid;
@@ -154,15 +165,56 @@ export default class Board {
             this.viewShip("", this.lastProposed);
             const { x, y, direction, size } = this.lastProposed;
             this.addShip(x, y, size, direction, true);
-            document.getElementsByClassName("selected")[0].remove();
-            shipS.selected = null;
-
+            shipS.shipPlaced();
         }
+    }
+    shoot(y: number, x: number, board2: Board) {
+        if (!this.allowShoot) {
+            document.getElementById('sexi-text').innerHTML = "Nie możesz teraz strzelać";
+            return;
+        }
+        if (this.board[y][x] === State.Taken) {
+            this.board[y][x] = State.Hit;
+            this.htmlBoard[y][x].classList.add('hit');
+            this.allowShoot = false;
+            document.getElementById('sexi-text').innerHTML = "Trafiony!<br>Ruch komputera";
+            board2.randomShoot(this).then(res=>{
+                this.allowShoot = true
+                document.getElementById('sexi-text').innerHTML = "Twój ruch";
+            });
+        }
+        if (this.board[y][x] === State.Empty) {
+            this.board[y][x] = State.Miss;
+            this.htmlBoard[y][x].classList.add('miss');
+            document.getElementById('sexi-text').innerHTML = "Pudło<br>Ruch komputera";
+            this.allowShoot = false;
+            board2.randomShoot(this).then(res=>{
+                this.allowShoot = true
+                document.getElementById('sexi-text').innerHTML = "Twój ruch";
+            });
+            return;
+        }
+        if (this.board[y][x] === State.Miss || this.board[y][x] === State.Hit) {
+            document.getElementById('sexi-text').innerHTML = "Już tam strzeliłeś";
+        }
+    }
+    randomShoot(board2: Board) {
+        return new Promise((resolve, reject) =>{
+            const [y,x] = this.shots[Math.floor(Math.random()* this.shots.length)];
+            console.log(this.htmlBoard[y][x]);
+            if(this.board[y][x] === State.Hit){
+                this.htmlBoard[y][x].classList.add('red');
+            }
+            else{
+                this.htmlBoard[y][x].classList.add('green');
+            }
+            setTimeout(resolve, 1000)
+        });
     }
 }
 
-function generateCheckPositions(ship:shipSetting, width: number, height: number): number[][][] {
-    const {x,y,size, direction} = ship;
+function generateCheckPositions(ship: shipSetting, width: number, height: number): number[][][] {
+    const { x, y, size, direction } = ship;
     const positions: number[][] = []
     for (let i = -1; i < 2; i++) {
         if (!direction) {
