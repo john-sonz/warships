@@ -1,11 +1,19 @@
 import { config } from "./../config";
-import Board from "./Board";
+import Board, {Win} from "./Board";
 import ShipSetter from './ShipSetter';
+
+function endGame(who: number){
+    if(who === Win.Player){
+        document.getElementById('sexi-text').innerHTML = "Wygrałeś!";
+    }else{
+        document.getElementById('sexi-text').innerHTML = "Przegrałeś!";
+    }
+}
 
 const { board, shipsSizes } = config;
 
-const machineBoard: Board = new Board(board[0], board[1]);
-const playerBoard: Board = new Board(board[0], board[1]);
+const machineBoard: Board = new Board(board[0], board[1], endGame);
+const playerBoard: Board = new Board(board[0], board[1], endGame);
 const shipSetter = new ShipSetter(shipsSizes);
 
 machineBoard.createHTMLBoard(null, playerBoard);
@@ -24,7 +32,11 @@ document.body.addEventListener("contextmenu", e => {
     }
 });
 const startButton = document.getElementById('start') as HTMLButtonElement;
-startButton.addEventListener('click', (e) => {
+startButton.disabled = true;
+startButton.addEventListener('click', (e) => {    
     document.getElementById('sexi-text').innerHTML = "Twój ruch";
     machineBoard.allowShoot = true;
+    startButton.remove();
 });
+
+
