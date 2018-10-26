@@ -137,21 +137,51 @@ body {
           align-items: center;
 }
 
-#sexi {
+#texts {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+#sexi, #machine-comments {
   background: -webkit-gradient(linear, left top, right top, from(red), color-stop(orange), color-stop(yellow), color-stop(green), color-stop(cyan), color-stop(blue), color-stop(violet), color-stop(blue), color-stop(cyan), color-stop(green), color-stop(yellow), color-stop(orange), to(red));
   background: linear-gradient(to right, red, orange, yellow, green, cyan, blue, violet, blue, cyan, green, yellow, orange, red);
   color: white;
   font-weight: bold;
-  width: 40%;
+  width: 400px;
   margin: 30px auto;
   border-color: red;
   border-width: 3px;
   border-style: solid;
   border-radius: 10px;
-  padding: 40px 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   height: 150px;
   text-align: center;
-  font-size: 2.5em;
+  font-size: 2.3em;
   font-family: Arial, sans-serif;
+}
+
+#sexi span, #machine-comments span {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+#machine-comments {
+  display: none;
 }
 /*# sourceMappingURL=style.css.map */

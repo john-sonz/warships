@@ -5,8 +5,10 @@ import ShipSetter from './ShipSetter';
 function endGame(who: number){
     if(who === Win.Player){
         document.getElementById('sexi-text').innerHTML = "Wygrałeś!";
+        document.getElementById('machine-text').innerHTML = "Gratulacje!";
     }else{
         document.getElementById('sexi-text').innerHTML = "Przegrałeś!";
+        document.getElementById('machine-text').innerHTML = "Nie przejmuj się Świetnie Ci szło :)";
     }
 }
 
@@ -35,6 +37,7 @@ const startButton = document.getElementById('start') as HTMLButtonElement;
 startButton.disabled = true;
 startButton.addEventListener('click', (e) => {    
     document.getElementById('sexi-text').innerHTML = "Twój ruch";
+    document.getElementById('machine-comments').style.display = "flex";
     machineBoard.allowShoot = true;
     startButton.remove();
 });

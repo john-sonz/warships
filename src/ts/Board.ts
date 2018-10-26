@@ -1,5 +1,5 @@
-import Ship from './Ship';
 import ShipSetter from './ShipSetter';
+import {comment} from './decorators';
 
 interface shipSetting {
     x: number;
@@ -18,6 +18,13 @@ export enum Win{
     Player,
     Machine
 }
+export enum PlayerMoves{
+    AlreadyShot,
+    CantShoot,
+    Hit,
+    Miss,
+}
+
 
 export default class Board {
     board: number[][] = [];
@@ -26,7 +33,6 @@ export default class Board {
     height: number;
     htmlBoard: HTMLElement[][] = [];
     boardContainer: HTMLElement;
-    ships: Ship[] = [];
     lastProposed: shipSetting = null;
     allowShoot: boolean = false;
     toHit: number;
@@ -114,7 +120,6 @@ export default class Board {
                 if (found) this.addShip(x, y, size, direction);
             }
         }
-        console.table(this.board);
     }
     checkPositions(ships: number[][], surroundings: number[][]): boolean {
         const s = ships.filter(pos => {
@@ -168,8 +173,16 @@ export default class Board {
         if (!this.lastProposed) return;
         const s = { ...this.lastProposed };
         s.direction = dir;
+        if (s.x + s.size > this.width && !s.direction) {
+            s.x = this.width - s.size;
+        }
+        if (s.y + s.size > this.height && s.direction) {
+            s.y = this.width - s.size;
+        }
+        const [shipsPos, surroundings] = generateCheckPositions(s, this.width, this.height);
+        const shipValid = this.checkPositions(shipsPos, surroundings);
         this.viewShip("", this.lastProposed);
-        this.viewShip("green", s);
+        this.viewShip(shipValid ? "green" : "red", s);
     }
     checkAndAddShip(e: Event, shipS: ShipSetter) {
         if (this.checkShip(e, shipS, false)) {
@@ -179,15 +192,16 @@ export default class Board {
             shipS.shipPlaced();
         }
     }
+    @comment
     shoot(y: number, x: number, board2: Board) {
         if(this.gameFinished) return;
         if (!this.allowShoot) {
             document.getElementById('sexi-text').innerHTML = "Nie możesz teraz strzelać";
-            return;
+            return PlayerMoves.CantShoot;
         }
         if (this.board[y][x] === State.Miss || this.board[y][x] === State.Hit) {
             document.getElementById('sexi-text').innerHTML = "Już tam strzeliłeś";
-            return;
+            return PlayerMoves.AlreadyShot;
         }
         const hit = this.board[y][x] === State.Taken;
         this.board[y][x] = hit ? State.Hit : State.Miss;
@@ -209,6 +223,7 @@ export default class Board {
                 this.gameFinished = true;
             }
         });
+        return hit ? PlayerMoves.Hit : PlayerMoves.Miss;
 
         
     }
