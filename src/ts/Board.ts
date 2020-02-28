@@ -1,5 +1,5 @@
 import ShipSetter from './ShipSetter';
-import {comment} from './decorators';
+import { comment } from './decorators';
 
 interface shipSetting {
     x: number;
@@ -14,11 +14,11 @@ enum State {
     Hit,
     Miss
 };
-export enum Win{
+export enum Win {
     Player,
     Machine
 }
-export enum PlayerMoves{
+export enum PlayerMoves {
     AlreadyShot,
     CantShoot,
     Hit,
@@ -29,17 +29,21 @@ export enum PlayerMoves{
 export default class Board {
     board: number[][] = [];
     shots: number[][] = []
+
     width: number;
     height: number;
+
     htmlBoard: HTMLElement[][] = [];
     boardContainer: HTMLElement;
+
     lastProposed: shipSetting = null;
     allowShoot: boolean = false;
     toHit: number;
     hits: number = 0;
     endGame: Function;
     gameFinished: boolean = false;
-    constructor(width: number, height: number, endGame:Function = null) {
+
+    constructor(width: number, height: number, endGame: Function = null) {
         this.endGame = endGame;
         [this.width, this.height] = [width, height];
         for (let i = 0; i < height; i++) {
@@ -51,9 +55,10 @@ export default class Board {
             this.board.push(row)
         }
     }
+
     createHTMLBoard(shipSetter: ShipSetter = null, board2: Board = null) {
         this.boardContainer = document.createElement("div")
-        this.boardContainer.className = "board";        
+        this.boardContainer.className = "board";
         for (let i = 0; i < this.height; i++) {
             const row: HTMLElement[] = [];
             const rowDiv = document.createElement('div');
@@ -79,7 +84,9 @@ export default class Board {
             this.boardContainer.appendChild(rowDiv);
         }
     }
+
     getHMTLBoard() { return this.boardContainer }
+
     addShip(x: number, y: number, length: number, direction: boolean, show: boolean = false) {
         for (let i = 0; i < length; i++) {
             let [X, Y] = [x, y];
@@ -91,6 +98,7 @@ export default class Board {
             }
         }
     }
+
     drawShips(shipSizes: number[]) {
         this.toHit = shipSizes.reduce((a, b) => a + b);
         while (shipSizes.length > 0) {
@@ -121,6 +129,7 @@ export default class Board {
             }
         }
     }
+
     checkPositions(ships: number[][], surroundings: number[][]): boolean {
         const s = ships.filter(pos => {
             return this.board[pos[1]][pos[0]] === State.Empty
@@ -130,6 +139,7 @@ export default class Board {
         })
         return (ships.length === s.length && surroundings.length === sur.length)
     }
+
     viewShip(color: string, s: shipSetting) {
         const { x, y, direction, size } = s;
         for (let i = 0; i < size; i++) {
@@ -169,6 +179,7 @@ export default class Board {
         }
         return shipValid;
     }
+
     updateLastShip(dir: boolean) {
         if (!this.lastProposed) return;
         const s = { ...this.lastProposed };
@@ -184,6 +195,7 @@ export default class Board {
         this.viewShip("", this.lastProposed);
         this.viewShip(shipValid ? "green" : "red", s);
     }
+
     checkAndAddShip(e: Event, shipS: ShipSetter) {
         if (this.checkShip(e, shipS, false)) {
             this.viewShip("", this.lastProposed);
@@ -192,9 +204,10 @@ export default class Board {
             shipS.shipPlaced();
         }
     }
+
     @comment
     shoot(y: number, x: number, board2: Board) {
-        if(this.gameFinished) return;
+        if (this.gameFinished) return;
         if (!this.allowShoot) {
             document.getElementById('sexi-text').innerHTML = "Nie możesz teraz strzelać";
             return PlayerMoves.CantShoot;
@@ -208,8 +221,8 @@ export default class Board {
         this.htmlBoard[y][x].classList.add(hit ? 'hit' : 'miss');
         document.getElementById('sexi-text').innerHTML = hit ? "Trafiony!<br>Ruch komputera" : "Pudło<br>Ruch komputera";
         this.allowShoot = false;
-        if(hit) this.hits++;
-        if(this.hits === this.toHit){
+        if (hit) this.hits++;
+        if (this.hits === this.toHit) {
             this.endGame(Win.Player);
             this.gameFinished = true;
             return;
@@ -218,22 +231,21 @@ export default class Board {
             board2.htmlBoard[y][x].classList.add(hit ? 'hit' : 'miss');
             this.allowShoot = true;
             document.getElementById('sexi-text').innerHTML = "Twój ruch";
-            if(board2.hits === board2.toHit) {
+            if (board2.hits === board2.toHit) {
                 this.endGame(Win.Machine);
                 this.gameFinished = true;
             }
         });
         return hit ? PlayerMoves.Hit : PlayerMoves.Miss;
-
-        
     }
+
     randomShoot() {
         return new Promise((resolve, reject) => {
             const r = Math.floor(Math.random() * this.shots.length);
             const [y, x] = this.shots[r];
-            const hit = this.board[y][x] === State.Taken;            
+            const hit = this.board[y][x] === State.Taken;
             this.shots.splice(r, 1);
-            if(hit) this.hits++;
+            if (hit) this.hits++;
             setTimeout(() => { resolve([y, x, hit]) }, 1000);
         });
     }

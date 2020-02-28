@@ -1,12 +1,12 @@
 import { config } from "./../config";
-import Board, {Win} from "./Board";
+import Board, { Win } from "./Board";
 import ShipSetter from './ShipSetter';
 
-function endGame(who: number){
-    if(who === Win.Player){
+function endGame(who: number) {
+    if (who === Win.Player) {
         document.getElementById('sexi-text').innerHTML = "Wygrałeś!";
         document.getElementById('machine-text').innerHTML = "Gratulacje!";
-    }else{
+    } else {
         document.getElementById('sexi-text').innerHTML = "Przegrałeś!";
         document.getElementById('machine-text').innerHTML = "Nie przejmuj się Świetnie Ci szło :)";
     }
@@ -33,9 +33,10 @@ document.body.addEventListener("contextmenu", e => {
         playerBoard.updateLastShip(shipSetter.direction);
     }
 });
+
 const startButton = document.getElementById('start') as HTMLButtonElement;
 startButton.disabled = true;
-startButton.addEventListener('click', (e) => {    
+startButton.addEventListener('click', (e) => {
     document.getElementById('sexi-text').innerHTML = "Twój ruch";
     document.getElementById('machine-comments').style.display = "flex";
     machineBoard.allowShoot = true;

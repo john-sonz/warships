@@ -4,6 +4,7 @@ import { PlayerMoves } from './Board';
 export function comment(targert: any, name: string, descriptor: any) {
     const original: Function = descriptor.value;
     const txt = document.getElementById('machine-text') as HTMLElement;
+
     descriptor.value = function (...args: any[]) {
         const result = original.apply(this, args);
         switch (result) {
@@ -13,7 +14,7 @@ export function comment(targert: any, name: string, descriptor: any) {
                 break;
             }
             case PlayerMoves.CantShoot: {
-                const t = ["Poczekaj chwilkę :)", "Już strzelam ;)", "Prawie wybrałem :D"]
+                const t = ["Wa :)", "Już strzelam ;)", "Prawie wybrałem :D"]
                 txt.innerHTML = t[Math.floor(Math.random() * t.length)];
                 break;
             }

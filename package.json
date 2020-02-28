@@ -8,7 +8,7 @@
   },
   "author": "",
   "license": "ISC",
-  "devDependencies": {    
+  "devDependencies": {
     "browserify": "^16.2.3",
     "gulp": "^3.9.1",
     "gulp-sourcemaps": "^2.6.4",
@@ -22,6 +22,7 @@
     "watchify": "^3.11.0"
   },
   "dependencies": {
+    "natives": "^1.1.6",
     "npm": "^6.4.1"
   }
 }
